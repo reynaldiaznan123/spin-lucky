@@ -1,0 +1,7 @@
+.DS_Store
+.svn
+*.sublime-project
+*.sublime-workspace
+*.dev.*
+_wip
+js/spin-two-three.transforms.js
