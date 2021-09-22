@@ -219,7 +219,7 @@ function Spin({
 		let animationStatus = -1;
     let speedIncrement = 0;
     let maxSpeed = 0;
-		let decelerationSpeed = 1;
+		let decelerationSpeed = Math.asin(1);
 
 		function _spin() {
 			if (isSpinning === false) {
@@ -294,7 +294,7 @@ function Spin({
         delta += (usePx === true ? speedIncrement : 0.5 * speedIncrement);
       } else if (animationStatus === 1) {
         // is decelerating
-        delta -= (usePx === true ? decelerationSpeed : decelerationSpeed * 0.5);
+        delta -= (usePx === true ? decelerationSpeed : 0.1);
       } else if (animationStatus === 2) {
         // is at max speed
         delta = maxSpeed;
@@ -313,7 +313,7 @@ function Spin({
 				const tween = new TWEEN.Tween({
 					top: 0,
 				});
-				tween.to({ top: 300 }, 0.35);
+				tween.to({ top: 0 }, 0.35);
 				tween.easing(TWEEN.Easing.Cubic.InOut)
 				tween.onUpdate(function(data) {
 					el.style.top = data.top + unit;
@@ -321,29 +321,16 @@ function Spin({
 				tween.onComplete(reset);
 				tween.start();
 			} else {
-				// const tween = new TWEEN.Tween({
-				// 	top: 0,
-				// });
-				// tween.to({ top: 300 }, 0.35);
-				// tween.easing(TWEEN.Easing.Cubic.InOut)
-				// tween.onUpdate(function(data) {
-				// 	el.style.top = data.top + unit;
-				// });
-				// tween.onComplete(reset);
-				// tween.start();
-
-				console.log(Cubic.easeInOut);
-
-				let line = '0'+unit;
-				TweenLite.to(el, '0'+unit, {
-					css: {
-						top: line,
-					},
-					ease: Cubic.easeInOut,
-					onComplete: function () {
-						alert();
-					}
+				const tween = new TWEEN.Tween({
+					top: 0,
 				});
+				tween.to({ top: 0 }, 0.35);
+				tween.easing(TWEEN.Easing.Cubic.InOut)
+				tween.onUpdate(function(data) {
+					el.style.top = data.top + unit;
+				});
+				tween.onComplete(reset);
+				tween.start();
 			}
     }
 
