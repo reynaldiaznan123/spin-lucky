@@ -7,6 +7,14 @@
     <title>Spin Slot Lucky</title>
 
     <style>
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 160px auto;
+        }
+
         .spin {
             overflow: hidden;
         }
@@ -17,18 +25,18 @@
             display: block;
         }
 
-
         .spin {
-            height: 50px;
-            width: 50px;
+            height: 120px;
+            width: calc(120px * 4);
+            display: flex;
         }
         .spin > .wheel {
-            width: 50px;
+            width: 120px;
             height: 100%;
         }
         .spin > .wheel .slice-item {
-            height: 50px;
-            width: 50px;
+            height: 120px;
+            width: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,68 +50,217 @@
 			left: 0;
 		}
 
-			.slice-item {
-				font-size: 16px;
-				font-size: 1rem;
-				white-space: normal;
-				display: inline-block;
-				vertical-align: top;
-				position: relative;
-        overflow: hidden;
-			}
+        .slice-item {
+            font-size: 16px;
+            font-size: 2.6rem;
+            white-space: normal;
+            font-weight: bold;
+            display: inline-block;
+            vertical-align: top;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
-    <button type="button" id="button">Spin</button>
-
-    <div id="spin" class="spin">
-        <div class="wheel">
-            <div class="slices">
-                <div class="slice-item" style="color: #ffffff;background-color: #273c75;">
-                    0
+    <div class="wrapper">
+        <div id="spin" class="spin">
+            <div class="wheel">
+                <div class="slices">
+                    <div class="slice-item" data-value="0" style="color: #ffffff;background-color: #273c75;">
+                        0
+                    </div>
+                    <div class="slice-item" data-value="1" style="color: #ffffff;background-color: #7f8fa6;">
+                        1
+                    </div>
+                    <div class="slice-item" data-value="2" style="color: #ffffff;background-color: #0097e6;">
+                        2
+                    </div>
+                    <div class="slice-item" data-value="3" style="color: #ffffff;background-color: #4cd137;">
+                        3
+                    </div>
+                    <div class="slice-item" data-value="4" style="color: #ffffff;background-color: #487eb0;">
+                        4
+                    </div>
+                    <div class="slice-item" data-value="5" style="color: #ffffff;background-color: #e1b12c;">
+                        5
+                    </div>
+                    <div class="slice-item" data-value="6" style="color: #ffffff;background-color: #9c88ff;">
+                        6
+                    </div>
+                    <div class="slice-item" data-value="7" style="color: #ffffff;background-color: #2f3640;">
+                        7
+                    </div>
+                    <div class="slice-item" data-value="8" style="color: #ffffff;background-color: #c23616;">
+                        8
+                    </div>
+                    <div class="slice-item" data-value="9" style="color: #ffffff;background-color: #40739e;">
+                        9
+                    </div>
                 </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #7f8fa6;">
-                    1
+            </div>
+            <div class="wheel">
+                <div class="slices">
+                    <div class="slice-item" data-value="0" style="color: #ffffff;background-color: #273c75;">
+                        0
+                    </div>
+                    <div class="slice-item" data-value="1" style="color: #ffffff;background-color: #7f8fa6;">
+                        1
+                    </div>
+                    <div class="slice-item" data-value="2" style="color: #ffffff;background-color: #0097e6;">
+                        2
+                    </div>
+                    <div class="slice-item" data-value="3" style="color: #ffffff;background-color: #4cd137;">
+                        3
+                    </div>
+                    <div class="slice-item" data-value="4" style="color: #ffffff;background-color: #487eb0;">
+                        4
+                    </div>
+                    <div class="slice-item" data-value="5" style="color: #ffffff;background-color: #e1b12c;">
+                        5
+                    </div>
+                    <div class="slice-item" data-value="6" style="color: #ffffff;background-color: #9c88ff;">
+                        6
+                    </div>
+                    <div class="slice-item" data-value="7" style="color: #ffffff;background-color: #2f3640;">
+                        7
+                    </div>
+                    <div class="slice-item" data-value="8" style="color: #ffffff;background-color: #c23616;">
+                        8
+                    </div>
+                    <div class="slice-item" data-value="9" style="color: #ffffff;background-color: #40739e;">
+                        9
+                    </div>
                 </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #0097e6;">
-                    2
+            </div>
+            <div class="wheel">
+                <div class="slices">
+                    <div class="slice-item" data-value="0" style="color: #ffffff;background-color: #273c75;">
+                        0
+                    </div>
+                    <div class="slice-item" data-value="1" style="color: #ffffff;background-color: #7f8fa6;">
+                        1
+                    </div>
+                    <div class="slice-item" data-value="2" style="color: #ffffff;background-color: #0097e6;">
+                        2
+                    </div>
+                    <div class="slice-item" data-value="3" style="color: #ffffff;background-color: #4cd137;">
+                        3
+                    </div>
+                    <div class="slice-item" data-value="4" style="color: #ffffff;background-color: #487eb0;">
+                        4
+                    </div>
+                    <div class="slice-item" data-value="5" style="color: #ffffff;background-color: #e1b12c;">
+                        5
+                    </div>
+                    <div class="slice-item" data-value="6" style="color: #ffffff;background-color: #9c88ff;">
+                        6
+                    </div>
+                    <div class="slice-item" data-value="7" style="color: #ffffff;background-color: #2f3640;">
+                        7
+                    </div>
+                    <div class="slice-item" data-value="8" style="color: #ffffff;background-color: #c23616;">
+                        8
+                    </div>
+                    <div class="slice-item" data-value="9" style="color: #ffffff;background-color: #40739e;">
+                        9
+                    </div>
                 </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #4cd137;">
-                    3
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #487eb0;">
-                    4
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #e1b12c;">
-                    5
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #9c88ff;">
-                    6
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #2f3640;">
-                    7
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #c23616;">
-                    8
-                </div>
-                <div class="slice-item" style="color: #ffffff;background-color: #40739e;">
-                    9
+            </div>
+            <div class="wheel">
+                <div class="slices">
+                    <div class="slice-item" data-value="0" style="color: #ffffff;background-color: #273c75;">
+                        0
+                    </div>
+                    <div class="slice-item" data-value="1" style="color: #ffffff;background-color: #7f8fa6;">
+                        1
+                    </div>
+                    <div class="slice-item" data-value="2" style="color: #ffffff;background-color: #0097e6;">
+                        2
+                    </div>
+                    <div class="slice-item" data-value="3" style="color: #ffffff;background-color: #4cd137;">
+                        3
+                    </div>
+                    <div class="slice-item" data-value="4" style="color: #ffffff;background-color: #487eb0;">
+                        4
+                    </div>
+                    <div class="slice-item" data-value="5" style="color: #ffffff;background-color: #e1b12c;">
+                        5
+                    </div>
+                    <div class="slice-item" data-value="6" style="color: #ffffff;background-color: #9c88ff;">
+                        6
+                    </div>
+                    <div class="slice-item" data-value="7" style="color: #ffffff;background-color: #2f3640;">
+                        7
+                    </div>
+                    <div class="slice-item" data-value="8" style="color: #ffffff;background-color: #c23616;">
+                        8
+                    </div>
+                    <div class="slice-item" data-value="9" style="color: #ffffff;background-color: #40739e;">
+                        9
+                    </div>
                 </div>
             </div>
         </div>
+        <button type="button" id="button">Spin</button>
     </div>
-
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script>
     <script src="/asset/libs/plugins/CSSPlugin.min.js"></script>
     <script src="/asset/libs/TweenLite.min.js"></script>
     <script src="/asset/js/tween.js"></script>
     <script src="/asset/js/spin.js"></script>
     <script>
-        new Spin({
-            root: document.querySelector('#spin'),
-            buttonSpin: '#button',
-            slices: document.querySelectorAll('.slices'),
-            options: {},
+        String.prototype.explode = function () {
+            const result = [];
+
+            for (let i = 0; i < this.length; i++) {
+                result.push(this[i]);
+            }
+
+            return result
+        };
+
+        function getOutputAndRemove(data) {
+            const index = Math.floor(Math.random() * data.length);
+            const result  = data.map(e => e.kode);
+
+            data.splice(index, 1);
+
+            return result[index].explode();
+        }
+
+        axios.post('http://localhost:8000/api/participants').then((response) => {
+            const data = response.data;
+            const rootEl = document.querySelector('#spin');
+            const slicesEl = document.querySelectorAll('.slices');
+
+            const spin = new Spin({
+                root: rootEl,
+                buttonSpin: '#button',
+                output: getOutputAndRemove(data),
+                slices: slicesEl,
+                digits: 4,
+            });
+
+            rootEl.addEventListener('spinclick', () => {
+                spin.output(getOutputAndRemove(data));
+            });
         });
+        
     </script>
 </body>
 </html>

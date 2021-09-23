@@ -2,22 +2,39 @@ function Spin({
 	root,
 	buttonSpin,
 	slices,
-	options,
+	output,
+	loops = NaN,
+	duration = 1000,
 }) {
 	// const SLICES_CLASS = '.slices';
 	// const SLICE_CLASS = '.slice';
-	const SLOT_DELAY = 10;
 
+  const _EVENT_SPIN_START = 'spinstart';
+  const _EVENT_SPIN_COMPLETE = 'spincomplete';
+	const _EVENT_SPIN_CLICK = 'spinclick';
+
+	const _COMMAND_SPIN = 'spin';
+  const _COMMAND_GOTO = 'goto';
+
+	let result = output;
 	let slots = [];
 	let isVertical = false;
 	let sliceSize = 0;
 	let usePx = false;
 	let unit = '%';
+	let spinsCompleted = 0;
+	let transitionSpeedModifier = 0.8;
+
+  let callbackStart;
+  let callbackComplete;
+  let callbackSpinClick;
 
 	NodeList.prototype.toArray = function () {
 		const array = new Array();
 		
 		for (let i = 0; i < this.length; i++) {
+			this[i].index = i;
+
 			array.push(this[i]);
 		}
 
@@ -28,6 +45,8 @@ function Spin({
 		const array = new Array();
 		
 		for (let i = 0; i < this.length; i++) {
+			this[i].index = i;
+
 			array.push(this[i]);
 		}
 
@@ -143,13 +162,15 @@ function Spin({
 
 		} else if (slices instanceof NodeList) {
 			for (let i = 0; i < slices.length; i++) {
-				slots.push(new Slot(slices[i], i, i * SLOT_DELAY));
+				slots.push(new Slot(slices[i], i, i * loops));
 			}
 		} else if (typeof slices === 'object') {
 
 		} else if (typeof slices === 'string') {
 
 		}
+
+		spinsCompleted = slots.length;
 
 		if (slots.length > 0) {
 			getSliceSize();
@@ -182,16 +203,74 @@ function Spin({
 		return 0;
 	}
 
+	function parseSlices(decrement) {
+    if (decrement === true) {
+      spinsCompleted = Math.max(0, spinsCompleted -= 1);
+    } else {
+      spinsCompleted += 1;
+      if (spinsCompleted === slots.length) {
+        const _slots = [];
+        for (let i = 0; i < slots.length; i++) {
+          _slots.push(slots[i]);
+        }
+				
+        // dispatchEvent(EVENT_SPIN_COMPLETE, {
+        //   slots: _slots
+        // });
+      }
+    }
+  }
+
 	function onSpinClick(e) {
 		const target = e.currentTarget || e.srcElement || e.target;
 
 		_spin();
+
+		dispatchEvent(_EVENT_SPIN_CLICK);
 	}
 
 	/**
 	 * EVENT
 	 */
-	 function _addEventListener(event, el, handler, options) {
+	 function dispatchEvent(t, ps) {
+    // events
+    let obj = {};
+    if (document.createEvent) {
+      obj = document.createEvent('HTMLEvents');
+      obj.initEvent(t, true, true);
+      for (const p in ps) {
+        obj[p] = ps[p];
+      }
+      root.dispatchEvent(obj);
+    } else if (window.Event) {
+			obj = new Event('')
+		}
+
+    // callbacks
+    // obj = {};
+    // for (var p in ps) {
+    //   obj[p] = ps[p];
+    // }
+    // var cb = undefined;
+    // switch (t) {
+    //   case _EVENT_SPIN_START:
+    //     obj.type = _EVENT_SPIN_START;
+    //     cb = callbackStart;
+    //     break;
+    //   case _EVENT_SPIN_COMPLETE:
+    //     obj.type = _EVENT_SPIN_COMPLETE;
+    //     cb = callbackComplete;
+    //     break;
+		// 	case _EVENT_SPIN_CLICK:
+		// 		obj.type = _EVENT_SPIN_CLICK;
+		// 		cb = callbackSpinClick;
+    // }
+    // if (cb) {
+    //   cb(obj);
+    // }
+  }
+
+	function _addEventListener(event, el, handler, options) {
 		if (typeof el.addEventListener === 'function') {
 			el.addEventListener(event, handler, options);
 		} else if (typeof el.attachEvent === 'function') {
@@ -211,7 +290,9 @@ function Spin({
 	 * SLOT
 	 */
 	function Slot(el, index, delay) {
+		let data = [];
 		let slices = el.children.toArray();
+		let length = slices.length;
 		let isSpinning = false;
 		let isSlowing = false;
 		let delayTimeout;
@@ -220,6 +301,11 @@ function Spin({
     let speedIncrement = 0;
     let maxSpeed = 0;
 		let decelerationSpeed = Math.asin(1);
+
+		// const data = [];
+		// for (let i = 0; i < result.length; i++) {
+		// 	data.push(output[i]);
+		// }
 
 		function _spin() {
 			if (isSpinning === false) {
@@ -234,14 +320,14 @@ function Spin({
 				delayTimeout = setTimeout(function () {
 					isSlowing = true;
 					clearTimeout(delayTimeout);
-				}, 1000 + delay);
+				}, duration + delay);
 
 				_rollSlot.bind(this)();
 
-				return false;
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		function _rollSlot() {
@@ -254,9 +340,9 @@ function Spin({
 			}
 
 			if (getLimit(el) < -sliceSize) {
-				let limitDelta = Math.abs(getLimit(el)) % sliceSize;
-        let n = Math.floor(Math.abs(getLimit(el)) / sliceSize);
-        let toReorderArray = slices.splice(0, n);
+				const limitDelta = Math.abs(getLimit(el)) % sliceSize;
+        const n = Math.floor(Math.abs(getLimit(el)) / sliceSize);
+        const toReorderArray = slices.splice(0, n);
         for (let i = 0; i < toReorderArray.length; i++) {
           const toReorder = toReorderArray[i];
           slices.push(toReorder);
@@ -337,28 +423,116 @@ function Spin({
 		function _reset() {
       _stop.bind(this)();
 
-      const n = Math.floor(Math.abs(getLimit(el)) / sliceSize);
-      const toReorderArray = slices.splice(0, n);
-      for (let i = 0; i < toReorderArray.length; i++) {
-        const toReorder = toReorderArray[i];
-        slices.push(toReorder);
-        el.appendChild(toReorder);
-      }
-      if (isVertical) {
-        el.style.left = 0 + unit;
-      } else {
-        el.style.top = 0 + unit;
-      }
+			if (data !== undefined && Array.isArray(data)) {
+				const n = slices.findIndex((e) => e.getAttribute('data-value') == data[index]);
+
+				_goto(slices[n].index, true);
+			} else {
+				const n = Math.floor(Math.abs(getLimit(el)) / sliceSize);
+				const toReorderArray = slices.splice(0, n);
+				for (let i = 0; i < toReorderArray.length; i++) {
+					const toReorder = toReorderArray[i];
+					slices.push(toReorder);
+					el.appendChild(toReorder);
+				}
+			}
+
+			if (isVertical) {
+				el.style.left = 0 + unit;
+			} else {
+				el.style.top = 0 + unit;
+			}
 
       // dispatchEvent(EVENT_SPIN_COMPLETE_SINGLE, {
       //   el: this
       // });
-      // parseSlices();
+      parseSlices();
+    }
+
+		function _goto(id, backspin) {
+      if (isSpinning === false) {
+        isSpinning = true;
+
+        let count = 0;
+        for (let i = 0; i < slices.length; i++) {
+          const slice = slices[i];
+          if (slice.index === id) {
+            count = i;
+            break;
+          }
+        }
+
+        const t = (((Math.random() * 750) + 1250) / 1000) * transitionSpeedModifier;
+
+        // var cb = _reset.bind(this);
+        let l;
+        if (backspin === true) {
+          var toReorderArray = slices.splice(0, count);
+          for (var i = 0; i < toReorderArray.length; i++) {
+            var toReorder = toReorderArray[i];
+            slices.push(toReorder);
+            el.appendChild(toReorder);
+          }
+          l = "0" + unit;
+          if (isVertical) {
+            el.style.left = -sliceSize * (length - count) + unit;
+          } else {
+            el.style.top = -sliceSize * (length - count) + unit;
+          }
+        } else {
+          l = "" + (-sliceSize * count) + unit;
+        }
+
+        if (isVertical) {
+					const tween = new TWEEN.Tween({
+						left: t,
+					});
+					tween.to({ left: l });
+					tween.easing(TWEEN.Easing.Cubic.InOut)
+					tween.onUpdate(function(data) {
+						el.style.top = data.top + unit;
+					});
+					tween.onComplete(_resetStyle);
+					tween.start();
+				} else {
+					const tween = new TWEEN.Tween({
+						top: t,
+					});
+					tween.to({ top: l });
+					tween.easing(TWEEN.Easing.Cubic.InOut)
+					tween.onUpdate(function(data) {
+						el.style.top = data.top + unit;
+					});
+					tween.onComplete(_resetStyle);
+					tween.start();
+				}
+
+				function _resetStyle() {
+					if (isVertical) {
+						el.style.left = 0 + unit;
+					} else {
+						el.style.top = 0 + unit;
+					}
+				}
+
+        // dispatchEvent(EVENT_SPIN_START_SINGLE, {
+        //   slot: this,
+        //   command: _COMMAND_GOTO,
+        //   index: id,
+        //   backspin: backspin
+        // });
+      }
     }
 
 		function _stop() {
       isSpinning = false;
     }
+
+		function _data(value) {
+			if (value && Array.isArray(value)) {
+				data = value;
+			}
+		}
 
 		function _getSlice(id) {
       if (id === undefined) {
@@ -382,6 +556,7 @@ function Spin({
 
 		return {
 			spin: _spin,
+			data: _data,
 			isSpinning: _getSpinningStatus,
 			getItem: _getSlice,
 			getItems: _getSlices,
@@ -401,9 +576,31 @@ function Spin({
 				const slot = slots[i];
 
 				if (slot.isSpinning() === false) {
+					slot.data(result);
+
 					slot.spin();
 				}
+
+				spinStarted = spinStarted === false
+					? slot.isSpinning() === true
+					: true;
 			}
 		}
+
+		if (spinStarted) {
+      dispatchEvent(_EVENT_SPIN_START, {
+        command: _COMMAND_SPIN
+      });
+    }
+	}
+
+	function _setOutput(output) {
+		if (output && Array.isArray(output)) {
+			result = output;
+		}
+	}
+
+	return {
+		output: _setOutput,
 	}
 }
